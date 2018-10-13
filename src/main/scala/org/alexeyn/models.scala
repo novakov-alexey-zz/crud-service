@@ -4,14 +4,17 @@ import java.time.LocalDate
 
 import org.alexeyn.Fuel.Fuel
 
-case class CarAd(
+final case class CarAd(
   id: Int,
   title: String,
   fuel: Fuel,
   price: Int,
   isNew: Boolean,
   mileage: Option[Int],
-  firstRegistration: Option[LocalDate])
+  firstRegistration: Option[LocalDate]
+)
+
+final case class CarAds(carAds: Seq[CarAd])
 
 object Fuel extends Enumeration {
   type Fuel = Value

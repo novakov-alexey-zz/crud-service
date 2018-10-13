@@ -15,7 +15,7 @@ object Main extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContext = system.dispatcher
 
-  lazy val routes = new QueryRoutes().routes ~ new CommandRoutes().routes
+  lazy val routes = new QueryRoutes().routes// ~ new CommandRoutes().routes
   val serverBinding = Http().bindAndHandle(routes, "localhost", 8080)
 
   serverBinding.onComplete {
