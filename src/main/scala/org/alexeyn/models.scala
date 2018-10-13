@@ -9,7 +9,7 @@ final case class CarAd(
   title: String,
   fuel: Fuel,
   price: Int,
-  isNew: Boolean,
+  `new`: Boolean,
   mileage: Option[Int],
   firstRegistration: Option[LocalDate]
 )

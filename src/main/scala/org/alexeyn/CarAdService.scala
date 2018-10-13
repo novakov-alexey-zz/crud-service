@@ -1,18 +1,24 @@
 package org.alexeyn
 
+import cats.Functor
 import org.alexeyn.CarAdService._
 
-class CarAdService(dao: Dao[CarAd]) {
+import scala.language.higherKinds
 
-  def selectAll(sort: Option[String]): Either[String, CarAds] = {
+class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
+
+  def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): Either[String, F[CarAds]] = {
     val sortBy = sort
       .map(s => if (sortFields.contains(s)) Right(s) else Left(s"Unknown sort field $s"))
       .getOrElse(Right(defaultSortField))
 
-    sortBy.map(s => CarAds(dao.selectAll(s)))
+    sortBy.map { s =>
+      val res = dao.selectAll(page.getOrElse(0), pageSize.getOrElse(10), s)
+      F.map(res)(sa => CarAds(sa))
+    }
   }
 
-  def select(id: Int): Option[CarAd] = dao.select(id)
+  def select(id: Int): F[Option[CarAd]] = dao.select(id)
 }
 
 object CarAdService {

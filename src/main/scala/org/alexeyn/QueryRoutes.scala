@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class QueryRoutes(service: CarAdService)(implicit ec: ExecutionContext, system: ActorSystem) extends JsonCodes {
+class QueryRoutes(service: CarAdService[Future])(implicit ec: ExecutionContext, system: ActorSystem) extends JsonCodes {
   lazy val log = Logging(system, classOf[QueryRoutes])
 
   val routes: Route =
@@ -18,9 +18,9 @@ class QueryRoutes(service: CarAdService)(implicit ec: ExecutionContext, system: 
       concat(
         pathEndOrSingleSlash {
           get {
-            parameters('sort.?) { sort =>
+            parameters('sort.?, 'page.as[Int].?, 'pageSize.as[Int].?) { (sort, page, pageSize) =>
               log.debug("Select all sorted by '{}'", sort)
-              val cars = Future(service.selectAll(sort))
+              val cars = service.selectAll(page, pageSize, sort)
               complete(cars)
             }
           }

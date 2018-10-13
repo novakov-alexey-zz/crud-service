@@ -1,12 +1,12 @@
 package org.alexeyn
 
-trait Dao[T] {
+trait Dao[T, U[_]] {
 
   def createSchema(): Unit
 
-  def insert(row: T): Unit
+  def insert(row: T): U[Int]
 
-  def selectAll(sort: String): Seq[T]
+  def selectAll(page: Int, pageSize: Int, sort: String): U[Seq[T]]
 
-  def select(id: Int): Option[T]
+  def select(id: Int): U[Option[T]]
 }
