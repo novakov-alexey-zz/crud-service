@@ -20,3 +20,7 @@ object Fuel extends Enumeration {
   type Fuel = Value
   val Gasoline, Diesel = Value
 }
+
+final case class CarAddInserted(insertedId: Int)
+final case class CarAddUpdated(updatedId: Int)
+final case class CarAddDeleted(deletedId: Int)

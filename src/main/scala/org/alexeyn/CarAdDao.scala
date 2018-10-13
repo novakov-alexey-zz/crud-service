@@ -54,4 +54,8 @@ class CarAdDao(db: Database) extends Dao[CarAd, Future] {
 
   override def select(id: Int): Future[Option[CarAd]] =
     db.run(carAds.filter(_.id === id).take(1).result.headOption)
+
+  override def update(id: Int, row: CarAd): Future[Int] = db.run(carAds.update(row)) //TODO: update by id
+
+  override def delete(id: Int): Future[Int] = db.run(carAds.filter(_.id === id).delete)
 }

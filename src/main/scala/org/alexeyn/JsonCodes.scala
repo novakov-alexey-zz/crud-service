@@ -35,4 +35,7 @@ trait JsonCodes extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val carAdJsonFormat: RootJsonFormat[CarAd] = jsonFormat7(CarAd)
   implicit val carAdsJsonFormat: RootJsonFormat[CarAds] = jsonFormat1(CarAds)
+  implicit val carAdInsertedFormat: RootJsonFormat[CarAddInserted] = jsonFormat1(CarAddInserted)
+  implicit val carAdUpdatedFormat: RootJsonFormat[CarAddUpdated] = jsonFormat1(CarAddUpdated)
+  implicit val carAdDeletedFormat: RootJsonFormat[CarAddDeleted] = jsonFormat1(CarAddDeleted)
 }

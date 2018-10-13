@@ -64,6 +64,8 @@ class QueryRoutesSpec extends WordSpec with Matchers with ScalaFutures with Scal
         }
       }
       override def select(id: Int): Future[Option[CarAd]] = Future.successful(mockData.lift(id))
+      override def delete(id: Int): Future[Int] = ???
+      override def update(id: Int, row: CarAd): Future[Int] = ???
     }
   }
 }

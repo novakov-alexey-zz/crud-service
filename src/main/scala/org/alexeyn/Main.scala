@@ -23,7 +23,7 @@ object Main extends App with StrictLogging {
   dao.createSchema()
 
   val service = new CarAdService(dao)
-  val routes = concat(new QueryRoutes(service).routes) // ~ new CommandRoutes().routes
+  val routes = concat(new QueryRoutes(service).routes, new CommandRoutes(service).routes)
   val serverBinding = Http().bindAndHandle(routes, "localhost", 8080) //TODO: pass from Config
 
   serverBinding.onComplete {

@@ -1,6 +1,9 @@
 package org.alexeyn
 
 trait Dao[T, U[_]] {
+  def delete(id: Int) : U[Int]
+
+  def update(id: Int, row: T): U[Int]
 
   def createSchema(): Unit
 
