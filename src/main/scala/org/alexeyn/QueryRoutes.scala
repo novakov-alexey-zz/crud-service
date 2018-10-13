@@ -1,7 +1,5 @@
 package org.alexeyn
 
-import java.time.LocalDate
-
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.server.Directives._
@@ -10,9 +8,9 @@ import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.PathDirectives.path
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class QueryRoutes(implicit system: ActorSystem) extends JsonCodes {
+class QueryRoutes(service: CarAdService)(implicit ec: ExecutionContext, system: ActorSystem) extends JsonCodes {
   lazy val log = Logging(system, classOf[QueryRoutes])
 
   val routes: Route =
@@ -20,20 +18,16 @@ class QueryRoutes(implicit system: ActorSystem) extends JsonCodes {
       concat(
         pathEndOrSingleSlash {
           get {
-            parameters('sort) { sort =>
-              val cars =
-                Future.successful(
-                  CarAds(
-                    Seq(CarAd(1, "toyota", Fuel.Diesel, 20000, isNew = true, None, Some(LocalDate.of(2010, 4, 22))))
-                  )
-                )
+            parameters('sort.?) { sort =>
+              log.debug("Select all sorted by '{}'", sort)
+              val cars = Future(service.selectAll(sort))
               complete(cars)
             }
           }
         },
-        path(Segment) { id =>
+        path(IntNumber) { id =>
           concat(get {
-            val maybeCarAd = Future.successful[Option[CarAd]](None)
+            val maybeCarAd = service.select(id)
             log.debug("Found carAd: {}", maybeCarAd)
             rejectEmptyResponse {
               complete(maybeCarAd)
