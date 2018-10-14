@@ -13,7 +13,7 @@ class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
     sortBy.map { s =>
       val res = dao.selectAll(page.getOrElse(0), pageSize.getOrElse(10), s)
-      F.map(res)(sa => CarAds(sa))
+      F.map(res)(CarAds)
     }
   }
 

@@ -11,7 +11,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.Future
 
-class QueryRoutesSpec extends WordSpec with Matchers with ScalaFutures with ScalatestRouteTest with JsonCodes {
+class QueryRoutesSpec extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
   private val mockData =
     IndexedSeq(
       CarAd(2, "honda", Fuel.Gasoline, 2000, `new` = false, Some(20000), Some(LocalDate.of(2000, 4, 22))),
