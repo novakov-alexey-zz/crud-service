@@ -11,7 +11,7 @@ import spray.json._
 
 import scala.concurrent.Future
 
-class CommandRoutesSpec extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
+class CommandRoutesTest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes {
   val adId = 1
   val toyotaAd = CarAd(adId, "toyota", Fuel.Diesel, 20000, `new` = true, None, Some(LocalDate.of(2010, 4, 22)))
 
