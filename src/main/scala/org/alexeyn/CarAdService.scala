@@ -6,9 +6,10 @@ import org.alexeyn.CarAdService._
 import scala.language.higherKinds
 
 class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
+
   def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): Either[String, F[CarAds]] = {
     val sortBy = sort
-      .map(s => if (sortFields.contains(s)) Right(s) else Left(s"Unknown sort field $s"))
+      .map(s => if (dao.sortingFields.contains(s)) Right(s) else Left(s"Unknown sort field $s"))
       .getOrElse(Right(defaultSortField))
 
     sortBy.map { s =>
@@ -27,6 +28,5 @@ class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 }
 
 object CarAdService {
-  val sortFields: Set[String] = Set("id", "title")
   val defaultSortField: String = "id"
 }

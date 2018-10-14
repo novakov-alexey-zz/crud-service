@@ -10,10 +10,11 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class QueryRoutes(service: CarAdService[Future])(implicit ec: ExecutionContext, system: ActorSystem) extends JsonCodes {
-  lazy val log = Logging(system, classOf[QueryRoutes])
+object QueryRoutes extends JsonCodes { self =>
 
-  val routes: Route =
+  def routes(service: CarAdService[Future])(implicit ec: ExecutionContext, system: ActorSystem): Route = {
+    lazy val log = Logging(system, QueryRoutes.getClass)
+
     pathPrefix("api" / "v1" / "cars") {
       concat(
         pathEndOrSingleSlash {
@@ -36,5 +37,5 @@ class QueryRoutes(service: CarAdService[Future])(implicit ec: ExecutionContext, 
         }
       )
     }
-
+  }
 }

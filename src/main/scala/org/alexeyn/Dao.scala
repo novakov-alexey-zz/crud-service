@@ -5,11 +5,13 @@ trait Dao[T, U[_]] {
 
   def update(id: Int, row: T): U[Int]
 
-  def createSchema(): Unit
+  def createSchema(): U[Unit]
 
   def insert(row: T): U[Int]
 
   def selectAll(page: Int, pageSize: Int, sort: String): U[Seq[T]]
 
   def select(id: Int): U[Option[T]]
+
+  def sortingFields: Set[String]
 }

@@ -18,9 +18,7 @@ final case class CarAds(carAds: Seq[CarAd])
 
 object Fuel extends Enumeration {
   type Fuel = Value
-  val Gasoline, Diesel = Value
+  val Diesel, Gasoline = Value
 }
 
-final case class CarAddInserted(insertedId: Int)
-final case class CarAddUpdated(updatedId: Int)
-final case class CarAddDeleted(deletedId: Int)
+final case class CommandResult(count: Int)
