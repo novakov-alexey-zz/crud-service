@@ -15,15 +15,15 @@ class Module(createSchema: Boolean = true, cfg: Config = ConfigFactory.load())(
   executionContext: ExecutionContext
 ) extends StrictLogging {
 
-  val db = Database.forConfig("ads", cfg)
+  val db = Database.forConfig("storage", cfg)
   val dao = new CarAdDao(db)
   val service = new CarAdService(dao)
   val routes: Route = concat(QueryRoutes.routes(service), CommandRoutes.routes(service))
 
-  if (createSchema) init()
+  if (createSchema) _createSchema()
 
-  def init(): Unit = {
-    dao.createSchema().failed.foreach(t => logger.error(s"Failed to create schema: t"))
+  private def _createSchema(): Unit = {
+    dao.createSchema().failed.foreach(t => logger.error(s"Failed to create schema: $t"))
   }
 
   def close(): Unit = {

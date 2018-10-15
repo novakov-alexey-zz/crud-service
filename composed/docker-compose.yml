@@ -5,14 +5,20 @@ services:
     image: crud-service:0.1.0-SNAPSHOT
     container_name: crud-service
     mem_limit: 2g
-
+    environment:
+      APP_CONFIG_PATH: /opt/conf/application.conf
+    volumes:
+      - ./config/application.conf:/opt/conf/application.conf
+    ports:
+      - 8080:8080
 
   postgres:
     restart: always
     image: postgres:10.4
+    container_name: crud-service-postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
-      - DB_USER=ads
-      - DB_PASS=ads
-      - DB_NAME=ads
+      - POSTGRES_USER=ads
+      - POSTGRES_PASSWORD=ads
+      - POSTGRES_DB=ads

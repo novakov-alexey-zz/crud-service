@@ -34,7 +34,7 @@ class E2ETest
           "user" -> container.username,
           "password" -> container.password
         ).asJava
-      ).atKey("ads")
+      ).atKey("storage")
       .withFallback(ConfigFactory.load())
   )
 

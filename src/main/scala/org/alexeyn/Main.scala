@@ -14,8 +14,9 @@ object Main extends App with StrictLogging {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContext = system.dispatcher
 
-  val mod = new Module()
-  val serverBinding = Http().bindAndHandle(mod.routes, "localhost", 8080) //TODO: pass from Config
+  val (server, cfg) = AppConfig.load
+  val mod = new Module(true, cfg)
+  val serverBinding = Http().bindAndHandle(mod.routes, server.host, server.port)
 
   serverBinding.onComplete {
     case Success(bound) =>
