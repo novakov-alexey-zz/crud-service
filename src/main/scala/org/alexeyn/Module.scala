@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import cats.instances.future._
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.StrictLogging
+import org.alexeyn.http.{CommandRoutes, QueryRoutes}
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext

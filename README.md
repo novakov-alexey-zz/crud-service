@@ -75,7 +75,7 @@ stop script:
 sh remove.sh
 ```
  
-###Tests
+### Tests
 
 #### Requirements
 - Docker daemon needs to be available for SBT tests

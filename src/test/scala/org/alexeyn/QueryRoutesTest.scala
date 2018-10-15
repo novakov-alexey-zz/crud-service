@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import cats.instances.future._
 import org.alexeyn.TestData._
+import org.alexeyn.http.QueryRoutes
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.Future

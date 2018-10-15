@@ -1,23 +1,23 @@
-package org.alexeyn
+package org.alexeyn.http
 
 import akka.actor.ActorSystem
 import akka.event.Logging
-import akka.http.scaladsl.marshalling.GenericMarshallers._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.PathDirectives.path
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
+import org.alexeyn._
 import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object CommandRoutes extends JsonCodes {
+object CommandRoutes extends JsonCodes with CORSHandler {
 
   def routes(service: CarAdService[Future])(implicit ec: ExecutionContext, system: ActorSystem): Route = {
     lazy val log = Logging(system, CommandRoutes.getClass)
 
-    pathPrefix("api" / "v1" / "cars") {
+    val route = pathPrefix("api" / "v1" / "cars") {
       concat(
         pathEndOrSingleSlash {
           post {
@@ -52,6 +52,7 @@ object CommandRoutes extends JsonCodes {
         }
       )
     }
+    corsHandler(route)
   }
 
   private def toCommandResponse[T](

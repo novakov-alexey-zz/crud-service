@@ -63,7 +63,8 @@ class E2ETest
       implicit val mileageOrdering: Ordering[Option[Int]] = Ordering.by(_.getOrElse(Int.MaxValue))
       checkSorting("mileage", _.mileage)
 
-      implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
+      // None/Null is the highest order in Postgres, so default is Max LocalDate then
+      implicit val localDateOrdering: Ordering[Option[LocalDate]] = Ordering.by(_.getOrElse(LocalDate.MAX).toEpochDay)
       checkSorting("first_registration", _.firstRegistration)
     }
 
