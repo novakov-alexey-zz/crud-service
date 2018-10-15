@@ -1,0 +1,18 @@
+version: '2.2'
+services:
+
+  crud-service:
+    image: crud-service:0.1.0-SNAPSHOT
+    container_name: crud-service
+    mem_limit: 2g
+
+
+  postgres:
+    restart: always
+    image: postgres:10.4
+    ports:
+      - "5432:5432"
+    environment:
+      - DB_USER=ads
+      - DB_PASS=ads
+      - DB_NAME=ads

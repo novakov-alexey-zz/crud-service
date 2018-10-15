@@ -46,7 +46,7 @@ object CommandRoutes extends JsonCodes {
             log.debug("Delete carAd: {}", id)
             val deleted = service.delete(id)
             complete {
-              toCommandResponse(deleted, CommandResult)
+              toCommandResponse(Right(deleted), CommandResult)
             }
           })
         }
@@ -55,12 +55,18 @@ object CommandRoutes extends JsonCodes {
   }
 
   private def toCommandResponse[T](
-    count: Future[Int],
+    count: Either[String, Future[Int]],
     f: Int => T
-  )(implicit ev: JsonWriter[T], ec: ExecutionContext) = {
-    count.map(i => {
-      val entity = HttpEntity(ContentTypes.`application/json`, f(i).toJson.toString())
-      HttpResponse(StatusCodes.OK, entity = entity)
-    })
+  )(implicit ev: JsonWriter[T], ec: ExecutionContext): Future[HttpResponse] = {
+
+    count match {
+      case Right(c) =>
+        c.map(i => {
+          val entity = HttpEntity(ContentTypes.`application/json`, f(i).toJson.toString())
+          HttpResponse(StatusCodes.OK, entity = entity)
+        })
+      case Left(e) =>
+        Future.successful(HttpResponse(StatusCodes.PreconditionFailed, entity = e))
+    }
   }
 }

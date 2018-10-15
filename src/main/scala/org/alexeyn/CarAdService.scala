@@ -20,11 +20,21 @@ class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
   def select(id: Int): F[Option[CarAd]] = dao.select(id)
 
-  def insert(carAd: CarAd): F[Int] = dao.insert(carAd) //TODO: validate carAd before insert
+  def insert(carAd: CarAd): Either[String, F[Int]] =
+    validateCarAd(carAd).map(_ => dao.insert(carAd))
 
-  def update(id: Int, carAd: CarAd): F[Int] = dao.update(id, carAd) //TODO: validate carAd before update
+  def update(id: Int, carAd: CarAd): Either[String, F[Int]] =
+    validateCarAd(carAd).map(_ => dao.update(id, carAd))
 
   def delete(id: Int): F[Int] = dao.delete(id)
+
+  private def validateCarAd(carAd: CarAd): Either[String, Unit] = {
+    if (carAd.`new` && carAd.mileage.isDefined)
+      Left("Only used car can have non-empty 'mileage'")
+    else if (carAd.`new` && carAd.firstRegistration.isDefined)
+      Left("Only used car can have non-empty 'first registration' date")
+    else Right()
+  }
 }
 
 object CarAdService {
