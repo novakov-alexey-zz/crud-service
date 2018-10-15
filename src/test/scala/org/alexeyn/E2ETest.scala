@@ -5,16 +5,40 @@ import java.time.LocalDate
 import akka.http.scaladsl.model.{ContentTypes, HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.dimafeng.testcontainers.{ForAllTestContainer, PostgreSQLContainer}
+import com.typesafe.config.{Config, ConfigFactory}
 import org.alexeyn.RequestsSupport._
 import org.alexeyn.TestData._
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class E2ETest extends WordSpec with Matchers with ScalatestRouteTest with JsonCodes with BeforeAndAfter {
+class E2ETest
+    extends WordSpec
+    with Matchers
+    with ScalatestRouteTest
+    with JsonCodes
+    with BeforeAndAfter
+    with ForAllTestContainer {
 
-  val mod = new Module
+  override val container = PostgreSQLContainer()
+
+  lazy val cfg: Config = ConfigFactory.load(
+    ConfigFactory
+      .parseMap(
+        Map(
+          "port" -> container.mappedPort(5432),
+          "url" -> container.jdbcUrl,
+          "user" -> container.username,
+          "password" -> container.password
+        ).asJava
+      ).atKey("ads")
+      .withFallback(ConfigFactory.load())
+  )
+
+  lazy val mod = new Module(createSchema = false, cfg)
 
   before {
     Await.ready(mod.db.run(mod.dao.dropSchema()), 10.seconds)
