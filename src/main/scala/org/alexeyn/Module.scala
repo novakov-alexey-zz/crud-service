@@ -23,11 +23,8 @@ class Module(createSchema: Boolean = true, cfg: Config = ConfigFactory.load())(
 
   if (createSchema) _createSchema()
 
-  private def _createSchema(): Unit = {
+  private def _createSchema(): Unit =
     dao.createSchema().failed.foreach(t => logger.error(s"Failed to create schema: $t"))
-  }
 
-  def close(): Unit = {
-    db.close()
-  }
+  def close(): Unit = db.close()
 }

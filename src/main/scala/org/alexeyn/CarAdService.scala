@@ -10,12 +10,13 @@ class CarAdService[F[_]](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
   def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): Either[String, F[CarAds]] = {
     val sortBy = sort
-      .map(s => if (dao.sortingFields.contains(s)) Right(s) else Left(s"Unknown sort field $s"))
-      .getOrElse(Right(defaultSortField))
+      .map(s => dao.sortingFields.find(_ == s).toRight(s"Unknown sort field $s"))
+      .getOrElse(Right(DefaultSortField))
 
-    sortBy.map { s =>
-      val res = dao.selectAll(page.getOrElse(0), pageSize.getOrElse(10), s)
-      res.map(CarAds)
+    sortBy.map { sort =>
+      dao
+        .selectAll(page.getOrElse(DefaultPage), pageSize.getOrElse(DefaultPageSize), sort)
+        .map(CarAds)
     }
   }
 
@@ -29,15 +30,15 @@ class CarAdService[F[_]](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
   def delete(id: Int): F[Int] = dao.delete(id)
 
-  private def validateCarAd(carAd: CarAd): Either[String, Unit] = {
-    if (carAd.`new` && carAd.mileage.isDefined)
-      Left("Only used car can have non-empty 'mileage'")
-    else if (carAd.`new` && carAd.firstRegistration.isDefined)
-      Left("Only used car can have non-empty 'first registration' date")
-    else Right()
+  private def validateCarAd(carAd: CarAd): Either[String, Unit] = carAd match {
+    case CarAd(_, _, _, _, true, Some(_), _) => Left("Only 'used' car can have non-empty 'mileage'")
+    case CarAd(_, _, _, _, true, _, Some(_)) => Left("Only 'used' car can have non-empty 'first registration' date")
+    case _ => Right()
   }
 }
 
 object CarAdService {
-  val defaultSortField: String = "id"
+  val DefaultPage = 0
+  val DefaultPageSize = 10
+  val DefaultSortField: String = "id"
 }
