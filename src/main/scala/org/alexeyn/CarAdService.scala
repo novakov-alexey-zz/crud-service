@@ -1,11 +1,12 @@
 package org.alexeyn
 
 import cats.Functor
+import cats.syntax.functor._
 import org.alexeyn.CarAdService._
 
 import scala.language.higherKinds
 
-class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
+class CarAdService[F[_]](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
   def selectAll(page: Option[Int], pageSize: Option[Int], sort: Option[String]): Either[String, F[CarAds]] = {
     val sortBy = sort
@@ -14,7 +15,7 @@ class CarAdService[F[_]: Functor](dao: Dao[CarAd, F])(implicit F: Functor[F]) {
 
     sortBy.map { s =>
       val res = dao.selectAll(page.getOrElse(0), pageSize.getOrElse(10), s)
-      F.map(res)(CarAds)
+      res.map(CarAds)
     }
   }
 
